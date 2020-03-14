@@ -1,0 +1,112 @@
+<template>
+    <ul class="nowplaying">
+            <Loading v-if="loading" />
+            <li v-for="item in nowPlayingList" :key="item.id">
+                <div class="cover">
+                    <img :src="item.img | handleCover('120.170')">
+                </div>
+                <div class="filmInfo">
+                    <div class="title">{{ item.nm }}</div>
+                    <div class="score">{{ item.wish }}想看</div>
+                    <div class="actor">主演：{{ item.star }}</div>
+                    <div class="wish">{{item.rt}}上映</div>
+                </div>
+                <div class="pay">
+                    <button>预售</button>
+                </div>
+            </li>
+        </ul>
+</template>
+
+
+<script>
+import request from "@/network/request.js";
+
+
+export default {
+    data() {
+        return {
+            nowPlayingList: [],
+            loading: true
+        };
+    },
+    created() {
+        this.loadNowPlaying();
+    },
+    methods: {
+        loadNowPlaying() {
+            request({
+                url: "/movieComingList?cityId=10"
+            }).then(({data: {data: { comingList }}}) => {
+                if (!comingList) {
+                    console.log("数据加载失败~");
+                    return;
+                } else {
+                    this.loading = false
+                    this.nowPlayingList = comingList
+                }
+            });
+        }
+    }
+};
+</script>
+
+
+<style lang="less" scoped>
+@color: #f0f0f0;
+@themeColor: #2f99eb;
+@otherColor: #7e7e7e;
+
+.nowplaying {
+    li {
+        display: flex;
+        border-top: 0.1rem solid @color;
+        padding: 0.5rem;
+        .cover {
+            width: 4.5rem;
+            height: 6.5rem;
+            overflow: hidden;
+            img{
+                width: 100%;
+            }
+        }
+        .filmInfo {
+            flex: 1;
+            margin-left: 0.5rem;
+            // overflow: hidden;
+            // white-space: nowrap;
+            // text-overflow: ellipsis;
+            div {
+                margin-top: 0.5rem;
+                color: @otherColor;
+            }
+            .title {
+                font-size: 1.2rem;
+                color: #000;
+                font-weight: bold;
+            }
+            .score,
+            .actor,
+            .wish {
+                font-size: 0.7rem;
+            }
+        }
+        .pay {
+            width: 3rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            button {
+                font-size: 0.7rem;
+                width: 100%;
+                background-color: @themeColor;
+                border: none;
+                outline: none;
+                border-radius: 0.3rem;
+                line-height: 1.5rem;
+                color: @color;
+            }
+        }
+    }
+}
+</style>
