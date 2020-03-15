@@ -1,67 +1,72 @@
 <template>
-    <div class="search-wrap">
-        <Loading v-if="loading" />
-        <div class="search">
-            <input type="text" placeholder="biu~" @input="handleSearch($event.target.value)">
+    <BScroll>
+        <div class="search-wrap">
+            <Loading v-if="loading" />
+            <div class="search">
+                <input type="text" placeholder="biu~" @input="handleSearch($event.target.value)" />
+            </div>
+            <div class="type">电影/电视剧/综艺</div>
+            <ul class="search-list">
+                <li v-for="item in searchList" :key="item.id">
+                    <div class="cover">
+                        <img :src="item.img | handleCover('120.170')" />
+                    </div>
+                    <div class="filmInfo">
+                        <div class="title">{{ item.nm }}</div>
+                        <div class="sort">{{ item.cat }}</div>
+                        <div class="star">{{ item.star }}</div>
+                        <div class="time">{{item.rt}}</div>
+                    </div>
+                    <div class="score">{{ item.sc }}</div>
+                </li>
+            </ul>
         </div>
-        <div class="type">
-            电影/电视剧/综艺
-        </div>
-        <ul class="search-list">
-            <li v-for="item in searchList" :key="item.id">
-                <div class="cover">
-                    <img :src="item.img | handleCover('120.170')">
-                </div>
-                <div class="filmInfo">
-                    <div class="title">{{ item.nm }}</div> 
-                    <div class="sort">{{ item.cat }}</div>
-                    <div class="star">{{ item.star }}</div>
-                    <div class="time">{{item.rt}}</div>
-                </div>
-                <div class="score">{{ item.sc }}</div>
-            </li>
-        </ul>
-    </div>
+    </BScroll>
 </template>
 
 <script>
-import request from '@/network/request.js'
-
+import request from "@/network/request.js";
 
 export default {
     data() {
         return {
-            search: '',
+            search: "",
             searchList: [],
             timer: -1,
             loading: false
-        }
+        };
     },
     methods: {
         // 啥时候心情好了在用watch重写
         handleSearch(val) {
-            if(val.trim() == ''){
-                this.searchList = []
-                return
+            if (val.trim() == "") {
+                this.searchList = [];
+                return;
             }
-            clearTimeout(this.timer)
+            clearTimeout(this.timer);
             this.timer = setTimeout(() => {
-                this.loading = true
+                this.loading = true;
                 request({
-                    url:'searchList',
+                    url: "searchList",
                     params: {
                         cityId: 10,
                         kw: val
                     }
-                }).then(({data: {data: { movies }}}) => {
-                    movies = movies?movies.list:[]
-                    this.loading = false
-                    this.searchList = movies
-                })
-            },1500)
+                }).then(
+                    ({
+                        data: {
+                            data: { movies }
+                        }
+                    }) => {
+                        movies = movies ? movies.list : [];
+                        this.loading = false;
+                        this.searchList = movies;
+                    }
+                );
+            }, 1500);
         }
     }
-}
+};
 </script>
 
 <style lang="less" scoped>
@@ -72,32 +77,35 @@ export default {
 @themeColor: #2f99eb;
 @otherColor: #7e7e7e;
 
-.search{
+.search-warp{
+    height: 100%;
+}
+
+.search {
     background-color: @bgColor;
-    padding: .75rem 0 .5rem 0;
-    input{
+    padding: 0.75rem 0 0.5rem 0;
+    input {
         width: 90%;
         margin: 0 auto;
         border: none;
         outline: none;
         display: block;
         line-height: 1.5rem;
-        border-radius: .25rem;
-        padding-left: .5rem;
-        font-size: .7rem;
+        border-radius: 0.25rem;
+        padding-left: 0.5rem;
+        font-size: 0.7rem;
     }
 }
-.type{
+.type {
     line-height: 2rem;
-    font-size: .7rem;
-    border: .05rem solid @bdColor;
+    font-size: 0.7rem;
+    border: 0.05rem solid @bdColor;
     border-left: none;
     border-right: none;
-    padding-left: .5rem;
+    padding-left: 0.5rem;
     color: @color;
     font-weight: bold;
 }
-
 
 .search-list {
     li {
@@ -108,7 +116,7 @@ export default {
             width: 4.5rem;
             height: 6.5rem;
             overflow: hidden;
-            img{
+            img {
                 width: 100%;
             }
         }
@@ -133,9 +141,9 @@ export default {
                 font-size: 0.7rem;
             }
         }
-        .score{
+        .score {
             width: 1.5rem;
-            padding-top: .5rem;
+            padding-top: 0.5rem;
             color: #ffb22e;
         }
     }

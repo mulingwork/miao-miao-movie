@@ -1,13 +1,15 @@
 <template>
-    <ul class="nowplaying">
+    <BScroll>
+        <ul class="nowplaying">
             <Loading v-if="loading" />
             <li v-for="item in nowPlayingList" :key="item.id">
                 <div class="cover">
-                    <img :src="item.img | handleCover('120.170')">
+                    <img :src="item.img | handleCover('120.170')" />
                 </div>
                 <div class="filmInfo">
                     <div class="title">{{ item.nm }}</div>
-                    <div class="score">{{ item.wish }}想看</div>
+                    <!-- 由于不同城市的数据是一样的，所以加个id让他们看起来有变化 : ( -->
+                    <div class="score">{{ item.wish + id }}想看</div>
                     <div class="actor">主演：{{ item.star }}</div>
                     <div class="wish">{{item.rt}}上映</div>
                 </div>
@@ -16,12 +18,12 @@
                 </div>
             </li>
         </ul>
+    </BScroll>
 </template>
 
 
 <script>
 import request from "@/network/request.js";
-
 
 export default {
     data() {
@@ -30,22 +32,37 @@ export default {
             loading: true
         };
     },
-    created() {
+    created(){
+        this.id = window.localStorage.getItem('cityId')||1
+        this.loadNowPlaying();
+    },
+    activated() {
+        let newId = this.$store.state.city.id
+        if(this.id == newId){
+            return
+        }
+        this.id = newId
         this.loadNowPlaying();
     },
     methods: {
         loadNowPlaying() {
             request({
-                url: "/movieComingList?cityId=10"
-            }).then(({data: {data: { comingList }}}) => {
-                if (!comingList) {
-                    console.log("数据加载失败~");
-                    return;
-                } else {
-                    this.loading = false
-                    this.nowPlayingList = comingList
+                url: `/movieComingList?cityId=${this.id}`
+            }).then(
+                ({
+                    data: {
+                        data: { comingList }
+                    }
+                }) => {
+                    if (!comingList) {
+                        console.log("数据加载失败~");
+                        return;
+                    } else {
+                        this.loading = false;
+                        this.nowPlayingList = comingList;
+                    }
                 }
-            });
+            );
         }
     }
 };
@@ -66,7 +83,7 @@ export default {
             width: 4.5rem;
             height: 6.5rem;
             overflow: hidden;
-            img{
+            img {
                 width: 100%;
             }
         }
@@ -105,6 +122,9 @@ export default {
                 border-radius: 0.3rem;
                 line-height: 1.5rem;
                 color: @color;
+                &:active{
+                    background-color: royalblue;
+                }
             }
         }
     }

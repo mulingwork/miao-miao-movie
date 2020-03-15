@@ -41,26 +41,29 @@ export default {
     padding: 2.25rem 0;
 }
 .login-info{
-    margin-top: .5rem;
+    width: 80vw;
+    margin: 2.25rem auto;
     span{
         color: @themeColor;
         font-size: .8rem;
         padding-left: .5rem;
     }
     input{
-        width: 98vw;
+        width: 90%;
         padding-left: 2vw;
         background-color: @bgColor;
-        margin: .5rem 0;
+        margin: .5rem auto;
         border: none;
         outline: none;
         line-height: 2rem;
         font-size: .7rem;
+        border-radius: .3rem;
+        display: block;
     }
     button{
-        width: 90vw;
-        margin: .5rem auto;
-        line-height: 2.25rem;
+        width: 100%;
+        margin: 2rem auto;
+        line-height: 2rem;
         display: block;
         border: none;
         outline: none;
@@ -68,6 +71,9 @@ export default {
         font-size: 1rem;
         color: @color;
         border-radius: .3rem;
+        &:active{
+            background-color: tomato;
+        }
     }
 }
 .other{

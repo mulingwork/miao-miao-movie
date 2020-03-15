@@ -19,24 +19,24 @@
 </template>
 
 <script>
-import Header from '@/components/common/Header/Header'
-import TopBar from '@/components/common/TopBar/TopBar'
-import TopBarItem from '@/components/common/TopBar/TopBarItem'
+import Header from "@/components/common/Header/Header";
+import TopBar from "@/components/common/TopBar/TopBar";
+import TopBarItem from "@/components/common/TopBar/TopBarItem";
 
 export default {
     components: {
-    Header,
-    TopBar,
-    TopBarItem
-  }
-}
+        Header,
+        TopBar,
+        TopBarItem
+    }
+};
 </script>
 
 <style lang="less" scoped>
-.cinema{
+.cinema {
     padding: 4.5rem 0 2.25rem 0;
 }
-.iconfont{
-    font-size: .7rem;
+.iconfont {
+    font-size: 0.7rem;
 }
 </style>

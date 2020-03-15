@@ -4,7 +4,9 @@ import router from './router'
 import store from './store'
 
 import Loading from './components/common/Loading/Loading'
+import BScroll from './components/common/BScroll/BScroll'
 Vue.component('Loading', Loading)
+Vue.component('BScroll', BScroll)
 
 
 Vue.filter('handleCover', function(url,size) {
