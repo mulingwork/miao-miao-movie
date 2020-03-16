@@ -1,6 +1,7 @@
 <template>
-    <BScroll>
+    <BScroll :pull_down="pull_down">
         <ul class="nowplaying">
+            <div class="pull-down" v-if="pullDown.isPull">{{pullDown.msg}}</div>
             <Loading v-if="loading" />
             <li v-for="item in nowPlayingList" :key="item.id">
                 <div class="cover">
@@ -29,7 +30,11 @@ export default {
     data() {
         return {
             nowPlayingList: [],
-            loading: true
+            loading: true,
+            pullDown: {
+                msg: '正在刷新',
+                isPull: false
+            }
         };
     },
     created(){
@@ -46,7 +51,7 @@ export default {
     },
     methods: {
         loadNowPlaying() {
-            request({
+            return request({
                 url: `/movieComingList?cityId=${this.id}`
             }).then(
                 ({
@@ -63,6 +68,18 @@ export default {
                     }
                 }
             );
+        },
+        pull_down(){
+            this.pullDown.msg = '正在刷新'
+            this.pullDown.isPull = true
+                setTimeout(() => {
+                    this.loadNowPlaying().then(() => {
+                    this.pullDown.msg = '刷新成功'
+                    setTimeout(() => {
+                        this.pullDown.isPull = false
+                    },500)
+                })
+            },1000)
         }
     }
 };
@@ -73,6 +90,12 @@ export default {
 @color: #f0f0f0;
 @themeColor: #2f99eb;
 @otherColor: #7e7e7e;
+
+.pull-down{
+    line-height: 3rem;
+    font-size: .7rem;
+    text-align: center;
+}
 
 .nowplaying {
     li {

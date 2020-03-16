@@ -1,18 +1,18 @@
 <template>
-    <BScroll>
+    <BScroll ref="scrollTo">
         <div class="cities">
             <Loading v-if="loading" />
             <dl class="hot-cities">
                 <dt>热门城市</dt>
                 <dd v-for="item in hotCity" :key="item.id" @tap="changeCity(item.id, item.nm)">{{ item.nm }}</dd>
             </dl>
-            <dl class="city-list" v-for="item in cityIndex" :key="item">
+            <dl class="city-list" v-for="item in cityIndex" :key="item" ref="city_index">
                 <dt>{{ item }}</dt>
                 <dd v-for="city in cities[item]" :key="city.id" @tap="changeCity(city.id, city.nm)" >{{ city.nm }}</dd>
             </dl>
         </div>
         <ul class="city-index">
-            <li v-for="item in cityIndex" :key="item">{{ item }}</li>
+            <li v-for="(item, i) in cityIndex" :key="item" @tap="handleScrollTo(i)">{{ item }}</li>
         </ul>
     </BScroll>
 </template>
@@ -74,6 +74,10 @@ export default {
             this.$router.push('/home/nowPlaying')
             window.localStorage.setItem('cityId', id)
             window.localStorage.setItem('cityName', nm)
+        },
+        handleScrollTo(i){
+            let y = this.$refs.city_index[i].offsetTop
+            this.$refs.scrollTo.handleScrollTo(y)
         }
     }
 };
