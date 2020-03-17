@@ -1,42 +1,58 @@
 <template>
-    <ul class="nowplaying">
-        <Loading v-if="loading" />
-        <li v-for="item in nowPlayingList" :key="item.id">
-            <div class="cover">
-                <img :src="item.img | handleCover('120.170')" />
-            </div>
-            <div class="filmInfo">
-                <div class="title">{{ item.nm }}</div>
-                <div class="score">观众评：{{ item.sc }}</div>
-                <div class="actor">演员：{{ item.star }}</div>
-                <div class="wish">今日放映{{item.wish}}场</div>
-            </div>
-            <div class="pay">
-                <button>购票</button>
-            </div>
-        </li>
-    </ul>
+    <BScroll :pull_down="pull_down">
+        <ul class="nowplaying">
+            <div class="pull-down" v-if="pullDown.isPull">{{pullDown.msg}}</div>
+            <li v-for="item in nowPlayingList" :key="item.id">
+                <div class="cover">
+                    <img :src="item.img | handleCover('120.170')" />
+                </div>
+                <div class="filmInfo">
+                    <div class="title">{{ item.nm }}</div>
+                    <div class="score">观众评：{{ item.sc }}</div>
+                    <div class="actor">演员：{{ item.star }}</div>
+                    <!-- 由于不同城市的数据是一样的，所以加个id让他们看起来有变化 : ( -->
+                    <div class="wish">今日放映{{item.wish + id}}场</div>
+                </div>
+                <div class="pay">
+                    <button>购票</button>
+                </div>
+            </li>
+            <Loading v-if="loading" />
+        </ul>
+    </BScroll>
 </template>
 
 
 <script>
 import request from "@/network/request.js";
 
-
 export default {
     data() {
         return {
             nowPlayingList: [],
-            loading: true
+            loading: true,
+            pullDown: {
+                msg: '正在刷新',
+                isPull: false
+            }
         };
     },
-    created() {
+    created(){
+        this.id = window.localStorage.getItem('cityId')||1
+        this.loadNowPlaying();
+    },
+    activated(){
+        let newId = this.$store.state.city.id
+        if(this.id == newId){
+            return
+        }
+        this.id = newId
         this.loadNowPlaying();
     },
     methods: {
         loadNowPlaying() {
-            request({
-                url: "/movieOnInfoList?cityId=10"
+            return request({
+                url: `/movieOnInfoList?cityId=${this.id}`
             }).then(
                 ({
                     data: {
@@ -47,11 +63,23 @@ export default {
                         console.log("数据加载失败~");
                         return;
                     } else {
-                        this.loading = false
+                        this.loading = false;
                         this.nowPlayingList = movieList;
                     }
                 }
             );
+        },
+        pull_down(){
+            this.pullDown.msg = '正在刷新'
+            this.pullDown.isPull = true
+                setTimeout(() => {
+                    this.loadNowPlaying().then(() => {
+                    this.pullDown.msg = '刷新成功'
+                    setTimeout(() => {
+                        this.pullDown.isPull = false
+                    },500)
+                })
+            },1000)
         }
     }
 };
@@ -62,6 +90,12 @@ export default {
 @color: #f0f0f0;
 @themeColor: #f25744;
 @otherColor: #7e7e7e;
+
+.pull-down{
+    line-height: 3rem;
+    font-size: .7rem;
+    text-align: center;
+}
 
 .nowplaying {
     li {
@@ -111,6 +145,9 @@ export default {
                 border-radius: 0.3rem;
                 line-height: 1.5rem;
                 color: @color;
+                &:active{
+                    background-color:tomato;
+                }
             }
         }
     }

@@ -1,5 +1,6 @@
 <template>
     <div id="app">
+        <!-- 这里的头部根据不同的页面而改变，目前由home页面来控制 -->
         <keep-alive>
             <router-view></router-view>
         </keep-alive>
@@ -30,9 +31,7 @@ export default {
 html {
     font-size: 100vw / 750 * 40;
 }
-</style>
 
-<style lang="less" scoped>
 @themeColor: #f25744;
 
 .linkActive {
